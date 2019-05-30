@@ -15,8 +15,8 @@ class Image < ActiveRecord::Base
 
   def self.search(params = {})
     query = all
-    query = within(params[:distance], origin: Point.new(params[:origin][:lng], params[:origin][:lat])) if params[:origin] && params[:distance]
-    query = excluding(params[:excluding]) if params[:excluding]
+    query = query.within(params[:distance].to_f, origin: Point.new(params[:origin][:lng].to_f, params[:origin][:lat].to_f)) if params[:origin] && params[:distance]
+    query = query.excluding(params[:excluding]) if params[:excluding]
     query
   end
 
