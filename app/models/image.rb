@@ -11,7 +11,20 @@ class Image < ActiveRecord::Base
               mapping: [%w(lng lng), %w(lat lat)]
 
   scope :including, ->(ids) { where(id: ids) }
-  scope :execluding, ->(ids) { where.not(id: ids) }
+  scope :excluding, ->(ids) { where.not(id: ids) }
+
+  def self.search(params = {})
+    query = all
+    query = within(params[:distance], origin: Point.new(params[:origin][:lng], params[:origin][:lat])) if params[:origin] && params[:distance]
+    query = excluding(params[:excluding]) if params[:excluding]
+    query
+  end
+
+  def self.with_distance(origin, scope)
+    scope.select("-1 as distance").each do |image|
+      image.distance = image.distance_from(origin)
+    end
+  end
 
   acts_as_mappable
   def to_lat_lng
