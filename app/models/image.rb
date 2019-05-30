@@ -10,6 +10,9 @@ class Image < ActiveRecord::Base
               allow_nil: true,
               mapping: [%w(lng lng), %w(lat lat)]
 
+  scope :including, ->(ids) { where(id: ids) }
+  scope :execluding, ->(ids) { where.not(id: ids) }
+
   acts_as_mappable
   def to_lat_lng
     Geokit::LatLng.new(lat,lng)
